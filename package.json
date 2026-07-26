@@ -14,12 +14,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@pulpo/i18n": "workspace:*",
-    "@pulpo/cms": "workspace:*",
     "@directus/sdk": "^20.3.0",
     "@fontsource-variable/lora": "^5.2.8",
     "@fontsource-variable/montserrat": "^5.2.8",
     "@iconify-json/heroicons": "^1.2.3",
+    "@pulpo/cms": "workspace:*",
+    "@pulpo/i18n": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.6",
     "astro-icon": "^1.1.5",
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.11",
-    "@tailwindcss/typography": "^0.5.19"
+    "@tailwindcss/typography": "^0.5.19",
+    "wrangler": "^4.114.0"
   }
 }

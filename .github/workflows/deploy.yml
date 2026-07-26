@@ -1,0 +1,70 @@
+name: Build and Deploy
+
+# Drei Auslöser:
+#   push               — Code-Änderung an dieser Seite
+#   repository_dispatch — INHALTS-Änderung in Paula (Webhook, event_type "rebuild");
+#                         siehe README → „Automatischer Rebuild"
+#   workflow_dispatch  — manueller Anstoß über die GitHub-Oberfläche
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [rebuild]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Ein Lauf zur Zeit. Ohne das könnten zwei Läufe (z. B. eine Preisänderung
+# während eines Code-Pushes) gleichzeitig deployen — welcher Inhalt am Ende
+# ausgeliefert wird, wäre dann Zufall. Ältere Läufe werden abgebrochen: sie
+# würden ohnehin nur einen veralteten Stand veröffentlichen.
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auslöser protokollieren
+        run: echo "Ausgelöst durch '${{ github.event_name }}'"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: pnpm einrichten
+        uses: pnpm/action-setup@v4
+
+      # Gecacht wird ausschließlich der pnpm-Store (heruntergeladene Pakete),
+      # niemals das Build-Ergebnis. Wichtig, weil die Seite ihre Inhalte
+      # WÄHREND des Builds aus Paula holt: ein reiner Inhalts-Rebuild läuft
+      # beim selben Commit erneut durch `pnpm build` und holt frische Daten.
+      - name: Node einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Abhängigkeiten installieren
+        run: pnpm install --frozen-lockfile
+
+      - name: Bauen
+        run: pnpm build
+
+      # Ohne `wranglerVersion` benutzt die Action das Wrangler, das der
+      # vorherige `pnpm install` bereitgestellt hat (devDependency, über den
+      # Lockfile gepinnt) — sonst würde sie sich selbst das jeweils neueste v4
+      # ziehen und die Deploy-Version bei jedem Lauf schwanken.
+      #
+      # `--branch=main` ist explizit gesetzt: bei `repository_dispatch` und
+      # `workflow_dispatch` erkennt Wrangler den Branch sonst nicht zuverlässig
+      # und legte eine Preview-Deployment an statt Produktion zu aktualisieren.
+      - name: Auf Cloudflare Pages veröffentlichen
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=elbuhotuerto --branch=main

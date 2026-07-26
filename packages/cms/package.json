@@ -11,9 +11,6 @@
     "lint": "eslint .",
     "check-types": "tsc --noEmit"
   },
-  "dependencies": {
-    "@directus/sdk": "^16.0.0"
-  },
   "devDependencies": {
     "typescript": "^5.0.0"
   }

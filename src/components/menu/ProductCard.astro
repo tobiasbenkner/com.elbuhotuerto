@@ -73,7 +73,7 @@ function formatPrice(price: string) {
               aria-label={`Bild von ${product.name} vergrößern`}
             >
               <Image
-                src={imageUrl(product.image.id)}
+                src={imageUrl(product.image)}
                 alt={String(product.name)}
                 width={192}
                 height={192}
@@ -117,7 +117,7 @@ function formatPrice(price: string) {
 
                 {/* Großes Bild */}
                 <Image
-                  src={imageUrl(product.image.id)}
+                  src={imageUrl(product.image)}
                   alt={String(product.name)}
                   width={1000}
                   height={1000}
