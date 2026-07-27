@@ -14,11 +14,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@directus/sdk": "^20.3.0",
     "@fontsource-variable/lora": "^5.2.8",
     "@fontsource-variable/montserrat": "^5.2.8",
     "@iconify-json/heroicons": "^1.2.3",
-    "@pulpo/cms": "workspace:*",
     "@pulpo/i18n": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.6",

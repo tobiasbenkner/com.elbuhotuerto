@@ -30,16 +30,29 @@ Reservierungen, Abrechnung und Webhooks sind es nicht und daher hier unerreichba
 ## Aufbau
 
 ```
-src/                 die Astro-Seite (die Wurzel ist zugleich der pnpm-Workspace)
-packages/cms/        Lese-Client + Übersetzungsschicht zu Paula
-packages/i18n/       Sprach-Auflösung (t, Resolver, Locales)
+src/content.config.ts   die Inhalts-Collections: Loader (Paula → Seite) + Schema
+src/lib/cms.ts          die Abfragen darauf (getTenant, getCategoriesWithProducts)
+src/                    die restliche Astro-Seite (die Wurzel ist zugleich der Workspace)
+packages/i18n/          Sprach-Auflösung (t, Resolver, Locales)
 ```
 
-`packages/cms` ist bewusst eine **Übersetzungsschicht**: es hält die Sprache der Seite
+Die Inhalte sind **Astro-Collections** (`tenant`, `categories`, `products`). Ihre
+Loader holen die Records beim Build aus Paula und legen sie in Astros
+Content-Store; die Komponenten lesen danach nur noch über `src/lib/cms.ts`.
+Ein Paula-Client als eigenes Paket ist dafür nicht mehr nötig.
+
+Der Content-Store unter `.astro/` ist reiner Cache und nicht eingecheckt. Die Loader
+leeren ihn bei jedem Sync und holen komplett neu — ein Inhalts-Rebuild sieht also
+immer den aktuellen Stand, nie einen halb alten.
+
+Die Loader sind zugleich die **Übersetzungsschicht**: sie halten die Sprache der Seite
 stabil (`postcode`, `opening_hours`, `maps`, `price_gross`), auch wo Paula anders
 benennt (`zip`, `openingHours`, `mapHref`, `price`). Reine Umbenennungen werden dort
-abgebildet, damit das Markup unangetastet bleibt. Wo sich die Daten **wirklich**
-unterscheiden, steht die neue Form:
+abgebildet, damit das Markup unangetastet bleibt. Das Schema daneben beschreibt nur
+die fertige Form — schlägt es fehl, hat sich Paulas Datenmodell bewegt, und der Build
+sagt es beim Sync, statt die Seite still halb leer zu rendern.
+
+Wo sich die Daten **wirklich** unterscheiden, steht die neue Form:
 
 - **Bilder** — Paula liefert eine Datei-URL plus einen **normalisierten** Fokuspunkt
   (`focalX`/`focalY`, 0..1); Directus lieferte Pixel-Koordinaten plus Bildmaße. Daher
@@ -119,4 +132,5 @@ Zwei Dinge, die beim ersten Einrichten irritieren:
 
 Herausgelöst aus dem Monorepo `pulpo.cloud.websites` (`websites/com.elbuhotuerto`) ohne
 Historie. Die zuvor dort geteilten Pakete `@pulpo/cms` und `@pulpo/i18n` sind
-mitgekommen und gehören jetzt zu dieser Seite.
+mitgekommen; `@pulpo/i18n` ist geblieben, `@pulpo/cms` ist in den Collections
+aufgegangen.

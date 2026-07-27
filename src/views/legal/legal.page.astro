@@ -2,7 +2,7 @@
 import SectionHeader from "@/components/ui/SectionHeader.astro";
 import type { LegalTranslations } from "./legal.i18n";
 import { resolveTranslations, type Language } from "@/lib/i18n";
-import { getTenant } from "@/lib/directus";
+import { getTenant } from "@/lib/cms";
 
 interface Props {
   lang: Language;

@@ -1,7 +1,7 @@
 # Eigenständiges Repo EINER Kundenseite. Die Workspace-Wurzel IST die
-# Astro-Seite selbst; darunter liegen die Pakete, die früher im Monorepo
-# pulpo.cloud.websites von allen Seiten geteilt wurden (@pulpo/cms, @pulpo/i18n).
-# Dadurch bleiben die `workspace:*`-Abhängigkeiten in der package.json gültig
-# und es musste keine einzige Import-Zeile angefasst werden.
+# Astro-Seite selbst; darunter liegt noch @pulpo/i18n, das früher im Monorepo
+# pulpo.cloud.websites von allen Seiten geteilt wurde. Der Paula-Zugriff war
+# einmal ebenso ein Paket (@pulpo/cms) und steckt jetzt in den Loadern der
+# Astro-Collections (`src/content.config.ts`).
 packages:
   - "packages/*"
