@@ -51,6 +51,12 @@ function getColor(type: string) {
                 <Icon name={"heroicons:envelope"} class="h-12 w-12" />
               )}
               {it.type === "whatsapp" && <Whatsapp />}
+              {/* Der Typ ist im Back Office ein freies Feld. Kommt einer an, den
+                  wir nicht kennen (z. B. „web"), bliebe sonst ein leerer Kreis
+                  stehen — der Globus ist die neutrale Rückfallebene. */}
+              {!["tel", "email", "whatsapp"].includes(it.type) && (
+                <Icon name={"heroicons:globe-alt"} class="h-12 w-12" />
+              )}
             </div>
 
             <h3 class="text-xl font-serif italic text-white mb-2">

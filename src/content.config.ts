@@ -1,5 +1,9 @@
 import { defineCollection, z } from "astro:content";
 import { PAULA_URL, TENANT_ID } from "./config";
+import {
+  languages as siteLanguages,
+  defaultLang as siteDefaultLang,
+} from "./lib/i18n";
 
 /**
  * Die Inhalte dieser Seite als Astro-Collections.
@@ -86,6 +90,53 @@ function asL10n(value: unknown): Record<string, string> | undefined {
   return Object.keys(out).length ? out : undefined;
 }
 
+/**
+ * Meldet, wenn die Sprachen im Back Office und die dieser Seite auseinanderlaufen.
+ *
+ * Die Seite führt ihre Sprachliste bewusst selbst (`src/lib/i18n.ts`): Astro
+ * braucht sie zur Build-Zeit für die statischen Routen, und je Sprache liegen
+ * Übersetzungsdateien im Repo. Eine Sprache hinzuzufügen ist hier also echte
+ * Arbeit und kein Datenfeld.
+ *
+ * Genau deshalb kann der Stand auseinanderlaufen, ohne dass es jemand merkt —
+ * am unangenehmsten in Richtung „Paula kennt eine Sprache, die Seite nicht":
+ * dort werden Texte gepflegt, die nirgends erscheinen. Diese Warnung macht das
+ * im Build-Protokoll sichtbar (dieselbe Idee wie bei GRILL_CATEGORY_ID).
+ */
+function warnLocaleDrift(locales: unknown, defaultLang: unknown): void {
+  const inPaula = Array.isArray(locales)
+    ? locales.filter((l): l is string => typeof l === "string" && !!l)
+    : [];
+  if (inPaula.length === 0) return; // nichts gepflegt → nichts zu vergleichen
+
+  const onSite = siteLanguages as readonly string[];
+
+  const unbuilt = inPaula.filter((l) => !onSite.includes(l));
+  if (unbuilt.length) {
+    console.warn(
+      `[Sprachen] Im Back Office gepflegt, aber von dieser Seite nicht gebaut: ` +
+        `${unbuilt.join(", ")}. Dort eingetragene Texte erscheinen nirgends. ` +
+        `Sprache in src/lib/i18n.ts ergänzen (inkl. Übersetzungsdateien).`,
+    );
+  }
+
+  const unmanaged = onSite.filter((l) => !inPaula.includes(l));
+  if (unmanaged.length) {
+    console.warn(
+      `[Sprachen] Die Seite baut ${unmanaged.join(", ")}, im Back Office ist ` +
+        `die Sprache nicht aktiv — diese Fassungen werden dort nicht gepflegt.`,
+    );
+  }
+
+  if (typeof defaultLang === "string" && defaultLang && defaultLang !== siteDefaultLang) {
+    console.warn(
+      `[Sprachen] Standardsprache weicht ab: Back Office "${defaultLang}", ` +
+        `Seite "${siteDefaultLang}". Davon hängt ab, welche Fassung einspringt, ` +
+        `wo eine Übersetzung fehlt.`,
+    );
+  }
+}
+
 /** Zeilen eines wiederholbaren JSON-Felds (PB validiert `json` nicht). */
 function asRows(value: unknown): PbRecord[] {
   if (!Array.isArray(value)) return [];
@@ -163,6 +214,8 @@ const tenant = defineCollection({
     if (!config) {
       throw new Error(`Keine site_settings für Restaurant ${RESTAURANT} gefunden`);
     }
+
+    warnLocaleDrift(config.locales, config.defaultLang);
 
     const social = config.social;
     return [

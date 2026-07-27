@@ -14,14 +14,19 @@ const tenant = await getTenant();
 
 // 1. Daten vorbereiten
 const fullAddress = `${tenant.street}, ${tenant.postcode} ${tenant.city}`;
+// Die E-Mail steht bevorzugt in der Kontakt-Kachel vom Typ „email"; fehlt die
+// (oder ihre Beschriftung), greift das kanonische Feld aus den Stammdaten.
+// Vorher stand hier `String(email?.label)` — ohne Kachel landete damit wörtlich
+// „undefined" im Impressum.
 const emailContact = tenant.contacts?.find((c) => c.type === "email");
 const email = resolveTranslations(emailContact, lang);
+const emailAddress = email?.label || tenant.contactEmail || "";
 
 // 2. Platzhalter ersetzen
 const contentWithData = t.content
   .replaceAll("{{tenant_name}}", tenant.name)
   .replaceAll("{{tenant_address}}", fullAddress)
-  .replaceAll("{{tenant_email}}", String(email?.label))
+  .replaceAll("{{tenant_email}}", emailAddress)
   .replaceAll("{{tenant_city}}", tenant.city); // Für den Gerichtsstand
 ---
 

@@ -3,13 +3,13 @@ import ProductCard from "./ProductCard.astro";
 import { Image } from "astro:assets";
 import { focalPosition, imageUrl, type ProductCategory } from "@/lib/cms";
 import punto from "@/assets/punto.webp";
+import { GRILL_CATEGORY_ID } from "@/config";
 
 type Props = {
   category: ProductCategory;
 };
 
 const { category } = Astro.props;
-const categoryId = "ac77db14-3c15-4138-9ba6-e7e089524ac8";
 // Paula speichert den Fokuspunkt normalisiert (0..1); Directus lieferte Pixel,
 // die erst durch die Bildmaße geteilt werden mussten. Fehlt er, ist es „center".
 const objectPosition = focalPosition(category.image);
@@ -47,7 +47,7 @@ const objectPosition = focalPosition(category.image);
   </div>
 
   {
-    category.id === categoryId && (
+    category.id === GRILL_CATEGORY_ID && (
       <>
         <div class="text-center py-4 text-sm">
           * Todas las carnes van acompañadas de guarnición de papas fritas o

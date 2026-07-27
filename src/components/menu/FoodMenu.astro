@@ -3,6 +3,7 @@ import CategoryCard from "./CategoryCard.astro";
 import CategoryNav from "./CategoryNav.astro";
 import { getCategoriesWithProducts } from "@/lib/cms";
 import { resolveTranslations } from "@/lib/i18n";
+import { GRILL_CATEGORY_ID } from "@/config";
 
 type Props = {
   lang: string;
@@ -12,6 +13,18 @@ const { lang } = Astro.props;
 
 const response = await getCategoriesWithProducts();
 const categories = resolveTranslations(response, lang);
+
+// Der Sonderblock am Ende von „Carnes a la brasa" (Beilagen-Hinweis +
+// Garstufen-Tafel) hängt an einer Record-ID. Passt sie zu keiner Kategorie,
+// verschwindet er kommentarlos von der Karte — genau das ist beim Wechsel von
+// Directus auf Paula passiert. Lieber eine Warnung im Build-Protokoll als ein
+// stiller Ausfall.
+if (!categories.some((category) => category.id === GRILL_CATEGORY_ID)) {
+  console.warn(
+    `[Karte] GRILL_CATEGORY_ID "${GRILL_CATEGORY_ID}" passt zu keiner Kategorie — ` +
+      `Beilagen-Hinweis und Garstufen-Tafel entfallen. ID in src/config.ts prüfen.`,
+  );
+}
 ---
 
 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">

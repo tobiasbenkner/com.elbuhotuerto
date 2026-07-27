@@ -24,3 +24,20 @@ export const PAULA_URL = (ENV?.PUBLIC_PAULA_URL ?? "https://pulpo.cloud").replac
  * Host. Überschreibbar per `PUBLIC_RESTAURANT_ID`.
  */
 export const TENANT_ID = ENV?.PUBLIC_RESTAURANT_ID ?? "u5h14zh46xghjuo";
+
+/**
+ * Kategorie **„Carnes a la brasa"** (`es-ar`: Parrilla) in Paulas
+ * `categories`-Collection.
+ *
+ * An ihr Ende hängt die Karte zwei Dinge, die es nur dort gibt: den Hinweis auf
+ * die Beilagen und die Garstufen-Tafel (`assets/punto.webp`). Das ist Inhalt
+ * dieser Seite, kein CMS-Feld — deshalb steht die Zuordnung hier und nicht in
+ * Paula.
+ *
+ * ACHTUNG: eine Record-ID, kein sprechender Schlüssel. Beim Wechsel des
+ * Backends oder des Restaurants zeigt sie ins Leere; damit das nicht wieder
+ * still passiert, warnt `FoodMenu.astro` beim Build, wenn keine Kategorie
+ * darauf passt. (Beim Umzug von Directus auf Paula stand hier noch die alte
+ * UUID — der Block verschwand kommentarlos von der Karte.)
+ */
+export const GRILL_CATEGORY_ID = ENV?.PUBLIC_GRILL_CATEGORY_ID ?? "qew0zh9itkrpnao";

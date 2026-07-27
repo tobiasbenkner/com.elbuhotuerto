@@ -14,13 +14,16 @@ const tenant = await getTenant();
 
 const fullAddress = `${tenant.street}, ${tenant.postcode} ${tenant.city}`;
 
+// Wie im Impressum: Kachel vom Typ „email" bevorzugt, sonst das kanonische
+// Stammdaten-Feld. `String(email?.label)` schrieb sonst „undefined" in den Text.
 const emailContact = tenant.contacts?.find((c) => c.type === "email");
 const email = resolveTranslations(emailContact, lang);
+const emailAddress = email?.label || tenant.contactEmail || "";
 
 const contentWithData = t.content
   .replaceAll("{{tenant_name}}", tenant.name)
   .replaceAll("{{tenant_address}}", fullAddress)
-  .replaceAll("{{tenant_email}}", String(email?.label));
+  .replaceAll("{{tenant_email}}", emailAddress);
 ---
 
 <div class="bg-background min-h-screen py-32 px-6">
