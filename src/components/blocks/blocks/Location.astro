@@ -92,13 +92,23 @@ const t = resolveTranslations(translations, lang);
           <ul class="space-y-4">
             {
               opening_hours.map((item) => (
-                <li class="flex justify-between items-end border-b border-white/5 pb-3">
-                  <span class="text-sm text-gray-400 font-light">
-                    {item.days_label}
-                  </span>
-                  <span class="text-sm md:text-base font-serif italic text-white tracking-wide">
-                    {item.hours_text}
-                  </span>
+                <li class="border-b border-white/5 pb-3">
+                  <div class="flex justify-between items-end gap-4">
+                    <span class="text-sm text-gray-400 font-light">
+                      {item.days_label}
+                    </span>
+                    <span class="text-sm md:text-base font-serif italic text-white tracking-wide">
+                      {item.hours_text}
+                    </span>
+                  </div>
+                  {/* Zusatz (z. B. „Küche bis 23:00") — gehört zur ganzen Zeile,
+                      steht deshalb darunter und nicht in der Spalte. Fehlt er,
+                      ist er `undefined` und die Zeile bleibt wie zuvor. */}
+                  {item.additional_info && (
+                    <p class="mt-1.5 text-xs text-gray-500 font-light">
+                      {item.additional_info}
+                    </p>
+                  )}
                 </li>
               ))
             }

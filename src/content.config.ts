@@ -67,15 +67,23 @@ async function pbList(
 const str = (value: unknown): string => (typeof value === "string" ? value : "");
 const num = (value: unknown): number => (typeof value === "number" ? value : 0);
 
-/** Nicht-leere String-Werte einer lokalisierten Map (PB validiert `json` nicht). */
-function asL10n(value: unknown): Record<string, string> {
+/**
+ * Nicht-leere String-Werte einer lokalisierten Map (PB validiert `json` nicht).
+ *
+ * Bleibt nichts übrig, kommt **`undefined`** zurück — NICHT `{}`. Der
+ * Sprach-Resolver erkennt ein leeres Objekt nämlich nicht als Blatt (es hat
+ * keine Sprach-Schlüssel) und reicht es unverändert durch; im Template stünde
+ * dann „[object Object]". Paula lässt leere Texte aus genau diesem Grund ganz
+ * weg — ein `{}` an dieser Stelle machte das wieder zunichte.
+ */
+function asL10n(value: unknown): Record<string, string> | undefined {
   const out: Record<string, string> = {};
   if (value && typeof value === "object" && !Array.isArray(value)) {
     for (const [lang, text] of Object.entries(value as Record<string, unknown>)) {
       if (typeof text === "string" && text.trim()) out[lang] = text;
     }
   }
-  return out;
+  return Object.keys(out).length ? out : undefined;
 }
 
 /** Zeilen eines wiederholbaren JSON-Felds (PB validiert `json` nicht). */
@@ -120,8 +128,9 @@ function allergenIcon(key: string): string {
 // Schema-Bausteine
 // ---------------------------------------------------------------------------
 
-/** Lokalisierter Text: Sprachcode → Text (in Paula die JSON-Felder). */
-const l10n = z.record(z.string(), z.string());
+/** Lokalisierter Text: Sprachcode → Text (in Paula die JSON-Felder).
+ *  Optional, weil `asL10n` leere Maps zu `undefined` macht (Begründung dort). */
+const l10n = z.record(z.string(), z.string()).optional();
 
 /** Ein Bild aus Paula: fertige Datei-URL + normalisierter Fokuspunkt (0..1).
  *  Bewusst kein `image()`-Helfer: der gilt nur für Dateien im Repo. Astro lädt
