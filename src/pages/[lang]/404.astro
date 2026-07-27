@@ -1,0 +1,39 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { languages, defaultLang, type Language } from "../../lib/i18n";
+import { getView } from "../../lib/registry";
+
+/**
+ * Dieselbe 404-Seite je Fremdsprache — `/de/404`, `/en/404`, `/es-ar/404`.
+ *
+ * Cloudflare Pages sucht die `404.html` vom angefragten Pfad aus nach oben:
+ * `/de/irgendwas` bekommt so `de/404.html` und damit die deutsche Fassung,
+ * alles Übrige die Standardsprache aus `src/pages/404.astro`.
+ */
+export function getStaticPaths() {
+  return languages
+    .filter((lang) => lang !== defaultLang)
+    .map((lang) => ({ params: { lang }, props: { lang } }));
+}
+
+interface Props {
+  lang: Language;
+}
+
+const { lang } = Astro.props;
+
+const view = getView("notfound", lang);
+if (!view) throw new Error("View 'notfound' fehlt in der Registry");
+
+const { Component, t } = view;
+---
+
+<Layout
+  title={t.seo.title}
+  description={t.seo.description}
+  lang={lang}
+  routeKey="notfound"
+  noindex
+>
+  <Component lang={lang} t={t} />
+</Layout>

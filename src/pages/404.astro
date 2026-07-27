@@ -1,0 +1,29 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { defaultLang } from "../lib/i18n";
+import { getView } from "../lib/registry";
+
+/**
+ * Die 404-Seite in der Standardsprache. Bewusst eine eigene Datei und nicht Teil
+ * des Catch-alls (`[...slug]`): nur eine Seite namens `404` landet als
+ * `404.html` im Build, und danach sucht Cloudflare Pages, wenn eine URL ins
+ * Leere läuft. Aus `[...slug]` käme `404/index.html` — nie ausgeliefert.
+ *
+ * Die Übersetzungen liegen wie bei allen Seiten in `src/views/notfound/`.
+ */
+const lang = defaultLang;
+const view = getView("notfound", lang);
+if (!view) throw new Error("View 'notfound' fehlt in der Registry");
+
+const { Component, t } = view;
+---
+
+<Layout
+  title={t.seo.title}
+  description={t.seo.description}
+  lang={lang}
+  routeKey="notfound"
+  noindex
+>
+  <Component lang={lang} t={t} />
+</Layout>

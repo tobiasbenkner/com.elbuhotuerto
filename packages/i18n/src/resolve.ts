@@ -24,6 +24,14 @@ export function createResolver<L extends string>(options: ResolveOptions<L>) {
     }
 
     const keys = Object.keys(obj);
+
+    // 2b. Leeres Objekt = ungepflegtes Übersetzungsfeld. Paula liefert für
+    // Texte ohne Inhalt `{}`; ohne diesen Fall gäbe es keinen Sprach-Key, das
+    // Objekt liefe als „normales verschachteltes Objekt" durch und landete als
+    // „[object Object]" im HTML — und wäre in Komponenten `{ x && ... }` sogar
+    // truthy. Ein leerer Text ist hier die richtige Auflösung.
+    if (keys.length === 0) return "" as any;
+
     const hasLangKey = keys.some((k) => languages.includes(k as L));
 
     // 3. Falls das Objekt Sprach-Keys enthält (Blatt-Knoten)

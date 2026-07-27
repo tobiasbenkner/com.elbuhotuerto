@@ -1,0 +1,52 @@
+---
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+import type { NotfoundTranslations } from "./notfound.i18n";
+import type { Language } from "@/lib/i18n";
+import { getTranslatedPath } from "@/lib/registry";
+
+interface Props {
+  lang: Language;
+  t: NotfoundTranslations;
+}
+
+const { lang, t } = Astro.props;
+
+const links = [
+  { href: getTranslatedPath("home", lang), label: t.home_cta },
+  { href: getTranslatedPath("menu", lang), label: t.menu_cta },
+];
+---
+
+<div class="bg-background min-h-screen py-32 px-6">
+  <div class="max-w-3xl mx-auto text-center">
+    <p
+      class="font-serif text-7xl md:text-9xl text-amber-200/30 leading-none mb-10 select-none"
+    >
+      404
+    </p>
+
+    <SectionHeader title={t.title} subtitle={t.subtitle} align="center" />
+
+    <p
+      class="text-gray-300 font-light leading-relaxed max-w-xl mx-auto mt-8 mb-12"
+    >
+      {t.text}
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="group relative inline-block px-10 py-4 overflow-hidden border border-white/30 rounded-sm transition-all duration-500 hover:border-white"
+          >
+            <span class="relative z-10 text-xs md:text-sm font-medium tracking-[0.3em] text-white uppercase">
+              {link.label}
+            </span>
+            <div class="absolute inset-0 z-0 bg-white/10 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0" />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</div>

@@ -12,6 +12,13 @@ export async function getStaticPaths() {
   const paths = [];
 
   for (const routeKey of Object.keys(routeSlugs)) {
+    // `notfound` ist registriert, damit Canonical, hreflang und der
+    // Sprachumschalter auf der 404-Seite stimmen — gebaut wird sie aber von
+    // `src/pages/404.astro` bzw. `src/pages/[lang]/404.astro`. Nur die legen
+    // `404.html` an, und danach sucht Cloudflare Pages; von hier käme
+    // `404/index.html`, das nie ausgeliefert würde.
+    if (routeKey === "notfound") continue;
+
     const slugs = routeSlugs[routeKey];
 
     for (const lang of languages) {
