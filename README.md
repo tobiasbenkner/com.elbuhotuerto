@@ -110,17 +110,41 @@ In Paula unter **Einstellungen → Webhooks** einen Webhook anlegen:
 | Feld       | Wert                                                                    |
 |------------|-------------------------------------------------------------------------|
 | Name       | `Website-Build`                                                          |
-| Ziel-URL   | `https://api.github.com/repos/tobiasbenkner/<REPO>/dispatches`           |
+| Ziel-URL   | `https://api.github.com/repos/tobiasbenkner/com.elbuhotuerto/actions/workflows/deploy.yml/dispatches` |
 | Auslöser   | Produkte, Kategorien (bei Bedarf zusätzlich Bilder, Seiten, Einstellungen) |
 | Bündeln    | leer = 60 s                                                              |
 | Zusatz-Header | `{"Authorization": "Bearer <TOKEN>", "Accept": "application/vnd.github+json"}` |
-| Eigener Body  | `{"event_type": "rebuild"}`                                          |
+| Eigener Body  | `{"ref": "main"}`                                                    |
 
-`<TOKEN>` ist ein GitHub-Token mit Schreibrecht auf **Contents** dieses
-Repositories (fein granular) bzw. dem `repo`-Scope (klassisch). Der `event_type`
-muss `rebuild` heißen — darauf hört `repository_dispatch` im Workflow.
+`<TOKEN>` ist ein fein granularer GitHub-Token auf dieses Repository mit
+Schreibrecht auf **Actions** (klassisch: `repo`-Scope). Nicht *Contents* — das
+ist die Berechtigung für den anderen Endpunkt unten, und mit ihr allein
+antwortet GitHub hier **403**.
 
-Zwei Dinge, die beim ersten Einrichten irritieren:
+`ref` ist der Branch, auf dem gebaut wird; die Datei `deploy.yml` muss auf dem
+Default-Branch liegen, damit GitHub sie überhaupt findet.
+
+URL, Body und Token-Berechtigung gehören zusammen. GitHub kennt zwei ähnlich
+aussehende Endpunkte, die verschiedene Bodys und verschiedene Rechte wollen —
+der Workflow oben hört auf beide:
+
+| Endpunkt                                                     | Body               | Token-Recht  | Trigger im Protokoll |
+|--------------------------------------------------------------|--------------------|--------------|----------------------|
+| `…/actions/workflows/deploy.yml/dispatches`                   | `{"ref":"main"}`   | Actions ✍️   | `workflow_dispatch`  |
+| `…/repos/OWNER/REPO/dispatches`                               | `{"event_type":"rebuild"}` | Contents ✍️ | `repository_dispatch` |
+
+Woran man erkennt, was klemmt:
+
+- **422** mit `"ref" wasn't supplied` → erster Endpunkt, aber Body des zweiten
+  (oder gar keiner).
+- **422** mit `"event_type" wasn't supplied` → umgekehrt.
+- Paulas eigene Felder tauchen als „not permitted keys" auf (`changes`,
+  `collections`, `event`, `restaurant`, `triggered_at`) → das Feld **Eigener
+  Body** ist leer. Ohne ihn schickt Paula ihr Standard-Ereignis, das keiner der
+  beiden Endpunkte akzeptiert.
+- **403** trotz korrektem Body → der Token hat das Recht der *anderen* Zeile.
+
+Zwei weitere Dinge, die beim ersten Einrichten irritieren:
 
 - GitHub antwortet mit **204 No Content**. Das ist Erfolg; im Zustellungs-Protokoll
   steht dann „HTTP 204" ohne Antworttext.
