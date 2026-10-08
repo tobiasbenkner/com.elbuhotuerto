@@ -45,7 +45,34 @@ const contentEs = `
   interesado.
 </p>
 
-<h3>5. Derechos</h3>
+<h3>5. Alojamiento de la Web</h3>
+<p>
+  Esta web se aloja en <strong>GitHub Pages</strong>, un servicio de GitHub
+  Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, EE. UU. Al
+  visitar la web, GitHub procesa datos técnicos necesarios para entregar
+  las páginas (en particular la dirección IP, fecha y hora de acceso,
+  página solicitada y navegador utilizado) y puede guardarlos
+  temporalmente en registros de servidor por motivos de seguridad.
+</p>
+<p>
+  La base legal es nuestro interés legítimo en una presentación segura y
+  fiable de la web (art. 6.1.f RGPD). GitHub está certificado en el marco
+  EU-U.S. Data Privacy Framework, que garantiza un nivel de protección
+  adecuado para la transferencia de datos a EE. UU. Más información en la
+  <a href="https://docs.github.com/es/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">declaración de privacidad de GitHub</a>.
+</p>
+
+<h3>6. Google Maps</h3>
+<p>
+  El mapa de la página de ubicación es un servicio de Google Ireland
+  Limited, Gordon House, Barrow Street, Dublín 4, Irlanda. Solo se carga
+  si usted lo activa expresamente; a partir de ese momento se transmiten
+  datos (entre ellos su dirección IP) a Google, también posiblemente a
+  servidores en EE. UU. La base legal es su consentimiento (art. 6.1.a
+  RGPD), que puede revocar en cualquier momento en la página de Cookies.
+</p>
+
+<h3>7. Derechos</h3>
 <p>
   Cualquier persona tiene derecho a obtener confirmación sobre si en {{tenant_name}}
   estamos tratando datos personales que les conciernan. Las
@@ -62,7 +89,8 @@ const contentEs = `
 </ul>
 <p>
   Para ejercer estos derechos, puede enviar un correo electrónico a
-  {{tenant_email}}.
+  {{tenant_email}}. Asimismo, tiene derecho a presentar una reclamación
+  ante la Agencia Española de Protección de Datos (www.aepd.es).
 </p>
 `;
 
@@ -100,10 +128,10 @@ export const translations = {
     de: "Datenschutz",
   },
   lastUpdate: {
-    es: "Última actualización: Enero 2025",
-    "es-ar": "Última actualización: Enero 2025",
-    en: "Last update: January 2025",
-    de: "Letzte Aktualisierung: Januar 2025",
+    es: "Última actualización: Octubre 2026",
+    "es-ar": "Última actualización: Octubre 2026",
+    en: "Last update: October 2026",
+    de: "Letzte Aktualisierung: Oktober 2026",
   },
   content: {
     es: contentEs,

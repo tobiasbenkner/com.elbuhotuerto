@@ -12,8 +12,12 @@ on:
     types: [rebuild]
   workflow_dispatch:
 
+# `pages: write` und `id-token: write` braucht actions/deploy-pages, um das
+# Build-Ergebnis als Pages-Deployment zu veröffentlichen.
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 # Ein Lauf zur Zeit. Ohne das könnten zwei Läufe (z. B. eine Preisänderung
 # während eines Code-Pushes) gleichzeitig deployen — welcher Inhalt am Ende
@@ -24,7 +28,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Auslöser protokollieren
@@ -54,17 +58,18 @@ jobs:
       - name: Bauen
         run: pnpm build
 
-      # Ohne `wranglerVersion` benutzt die Action das Wrangler, das der
-      # vorherige `pnpm install` bereitgestellt hat (devDependency, über den
-      # Lockfile gepinnt) — sonst würde sie sich selbst das jeweils neueste v4
-      # ziehen und die Deploy-Version bei jedem Lauf schwanken.
-      #
-      # `--branch=main` ist explizit gesetzt: bei `repository_dispatch` und
-      # `workflow_dispatch` erkennt Wrangler den Branch sonst nicht zuverlässig
-      # und legte eine Preview-Deployment an statt Produktion zu aktualisieren.
-      - name: Auf Cloudflare Pages veröffentlichen
-        uses: cloudflare/wrangler-action@v3
+      - name: Build-Ergebnis für Pages bereitstellen
+        uses: actions/upload-pages-artifact@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=elbuhotuerto --branch=main
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Auf GitHub Pages veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v4

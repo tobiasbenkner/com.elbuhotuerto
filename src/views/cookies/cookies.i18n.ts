@@ -9,21 +9,16 @@ const contentEs = `
   navegación de un usuario o de su equipo.
 </p>
 
-<h3>¿Qué tipos de cookies utiliza esta web?</h3>
-<p>Esta página web utiliza los siguientes tipos de cookies:</p>
-<ul>
-  <li>
-    <strong>Cookies de análisis:</strong> Son aquéllas que bien tratadas por
-    nosotros o por terceros, nos permiten cuantificar el número de usuarios
-    y así realizar la medición y análisis estadístico de la utilización que
-    hacen los usuarios del servicio ofertado. (Google Analytics).
-  </li>
-  <li>
-    <strong>Cookies técnicas:</strong> Son aquellas que permiten al usuario
-    la navegación a través del área restringida y la utilización de sus diferentes
-    funciones.
-  </li>
-</ul>
+<h3>¿Qué cookies utiliza esta web?</h3>
+<p>
+  Esta web <strong>no utiliza cookies propias</strong> ni herramientas de
+  analítica.
+</p>
+<p>
+  Lo único que se guarda en su navegador es, si usted activa el mapa, su
+  consentimiento para cargar Google Maps (véase más abajo). Este dato no
+  sale de su equipo y puede eliminarlo en cualquier momento.
+</p>
 
 <h3>Desactivar las cookies</h3>
 <p>
@@ -35,8 +30,8 @@ const contentEs = `
 <h3>Cookies de terceros (Google Maps)</h3>
 <p>
   Esta página web utiliza servicios de terceros para mostrar mapas
-  interactivos. Al activar el mapa, se transfieren datos a Google y se
-  guarda su consentimiento en su navegador (Local Storage) para mejorar
+  interactivos. Al activar el mapa, se transfieren datos a Google, que
+  puede establecer sus propias cookies, y se guarda su consentimiento en su navegador (Local Storage) para mejorar
   su experiencia en futuras visitas.
 </p>
 `;
@@ -75,10 +70,10 @@ export const translations = {
     de: "Cookie-Nutzung",
   },
   lastUpdate: {
-    es: "Última actualización: Enero 2025",
-    "es-ar": "Última actualización: Enero 2025",
-    en: "Last update: January 2025",
-    de: "Letzte Aktualisierung: Januar 2025",
+    es: "Última actualización: Octubre 2026",
+    "es-ar": "Última actualización: Octubre 2026",
+    en: "Last update: October 2026",
+    de: "Letzte Aktualisierung: Oktober 2026",
   },
   content: {
     es: contentEs,
