@@ -40,8 +40,7 @@ export function createResolver<L extends string>(options: ResolveOptions<L>) {
       if (typedObj[lang]) return typedObj[lang];
       const baseLang = lang.split("-")[0];
       if (typedObj[baseLang]) return typedObj[baseLang];
-      if (typedObj[defaultLang]) return typedObj[defaultLang];
-      return Object.values(typedObj)[0] || "";
+      return typedObj[defaultLang] || "";
     }
 
     // 4. Normales verschachteltes Objekt verarbeiten
